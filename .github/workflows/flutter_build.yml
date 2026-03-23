@@ -1,0 +1,138 @@
+name: Fast Multi-Platform Build
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      tag_name: ${{ steps.vars.outputs.tag_name }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          cache: true
+
+      - id: vars
+        run: echo "tag_name=${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || github.sha }}" >> $GITHUB_OUTPUT
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Generate Code
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Upload Generated Files
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-code
+          path: |
+            lib/**/*.g.dart
+            .dart_tool/ # 包含 pub 缓存索引，非常重要
+
+  build:
+    needs: prepare
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { os: ubuntu-latest, platform: apk, name: android }
+          - { os: ubuntu-latest, platform: linux, name: linux }
+          - { os: windows-latest, platform: windows, name: windows }
+          - { os: macos-latest, platform: macos, name: macos }
+          - { os: macos-latest, platform: ios, name: ios, args: "--no-codesign" }
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. 【Android 专用优化】设置 Java 和 Gradle 缓存
+      - name: Setup Java
+        if: matrix.config.name == 'android'
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Setup Gradle
+        if: matrix.config.name == 'android'
+        uses: gradle/actions/setup-gradle@v3 # 核心加速器：缓存 Gradle 依赖和构建输出
+
+      # 2. 设置 Flutter
+      - uses: subosito/flutter-action@v2
+        with:
+          cache: true
+
+      # 3. 下载预生成的代码
+      - name: Download Generated Files
+        uses: actions/download-artifact@v4
+        with:
+          name: generated-code
+
+      - name: Install System Dependencies (Linux)
+        if: matrix.config.platform == 'linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build libgtk-3-dev
+
+      # 4. 编译（由于下载了 .dart_tool，pub get 会极快）
+      - name: Build
+        run: |
+          flutter pub get --offline || flutter pub get # 优先尝试离线模式
+          flutter build ${{ matrix.config.platform }} --release ${{ matrix.config.args }}
+
+      # 5. 产物打包（修正了路径和逻辑）
+      - name: Package Assets
+        shell: bash
+        run: |
+          if [ "${{ matrix.config.platform }}" == "web" ]; then
+            tar -czvf web.tar.gz -C build/web .
+          elif [ "${{ matrix.config.platform }}" == "linux" ]; then
+            tar -czvf linux-x64.tar.gz -C build/linux/x64/release/bundle .
+          elif [ "${{ matrix.config.platform }}" == "windows" ]; then
+            cd build/windows/x64/runner/Release && 7z a ../../../../../windows-x64.zip *
+          elif [ "${{ matrix.config.platform }}" == "macos" ]; then
+            cd build/macos/Build/Products/Release && tar -czvf ../../../../../macos.tar.gz *.app
+          elif [ "${{ matrix.config.platform }}" == "ios" ]; then
+            cd build/ios/iphoneos && tar -czvf ../../../ios.tar.gz Runner.app
+          elif [ "${{ matrix.config.platform }}" == "apk" ]; then
+            cp build/app/outputs/flutter-apk/app-release.apk android-release.apk
+          fi
+
+      - name: Upload Platform Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts-${{ matrix.config.name }}
+          path: |
+            *.tar.gz
+            *.zip
+            *.apk
+
+  publish:
+    needs: [prepare, build]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/') # 仅在有 Tag 时发布
+    steps:
+      - name: Download All Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+          pattern: build-artifacts-*
+          merge-multiple: true
+
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/*
+          tag_name: ${{ needs.prepare.outputs.tag_name }}
+          name: Release ${{ needs.prepare.outputs.tag_name }}
+          draft: false
+          prerelease: false
+          generate_release_notes: true
