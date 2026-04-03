@@ -1,7 +1,7 @@
 import 'package:fluent_ui/fluent_ui.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:nat_tester/widgets/adapter_list_tile.dart';
 
-class SelectFieldTile<T> extends HookWidget {
+class SelectFieldTile<T> extends StatelessWidget {
   const SelectFieldTile({
     required this.icon,
     required this.title,
@@ -21,24 +21,26 @@ class SelectFieldTile<T> extends HookWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    return AdapterListTile(
       leading: Icon(icon),
       title: Text(title),
       subtitle: description == null ? null : Text(description!),
-      trailing: SizedBox(
-        width: 160,
-        child: ComboBox<T>(
-          value: value,
-          onChanged: (T? selected) {
-            if (selected != null) {
-              onChanged(selected);
-            }
-          },
-          items: options.map((T entry) {
-            return ComboBoxItem<T>(value: entry, child: Text('$entry'));
-          }).toList(),
-        ),
-      ),
+      trailingBuilder: (BuildContext context, bool isCompact) {
+        return SizedBox(
+          width: isCompact ? double.infinity : 160,
+          child: ComboBox<T>(
+            value: value,
+            onChanged: (T? selected) {
+              if (selected != null) {
+                onChanged(selected);
+              }
+            },
+            items: options.map((T entry) {
+              return ComboBoxItem<T>(value: entry, child: Text('$entry'));
+            }).toList(),
+          ),
+        );
+      },
     );
   }
 }

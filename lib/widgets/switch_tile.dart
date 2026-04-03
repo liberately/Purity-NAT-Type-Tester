@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:nat_tester/widgets/adapter_list_tile.dart';
 
 class SwitchTile extends StatelessWidget {
   const SwitchTile({
@@ -18,19 +19,10 @@ class SwitchTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    return AdapterListTile(
       leading: Icon(icon),
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(title),
-          if (description != null)
-            Text(
-              description!,
-              style: FluentTheme.of(context).typography.caption,
-            ),
-        ],
-      ),
+      title: Text(title),
+      subtitle: description == null ? null : Text(description!),
       trailing: ToggleSwitch(checked: value, onChanged: onChanged),
     );
   }

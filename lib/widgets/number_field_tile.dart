@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:nat_tester/widgets/adapter_list_tile.dart';
 
 class NumberFieldTile extends StatelessWidget {
   const NumberFieldTile({
@@ -20,36 +21,29 @@ class NumberFieldTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    return AdapterListTile(
       leading: Icon(icon),
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(title),
-          if (description != null)
-            Text(
-              description!,
-              style: FluentTheme.of(context).typography.caption,
-            ),
-        ],
-      ),
-      trailing: SizedBox(
-        width: 160,
-        child: NumberBox(
-          mode: SpinButtonPlacementMode.none,
-          placeholder: placeholder.toString(),
-          value: value,
-          onChanged: (num? value) {
-            if (value == null) {
-              onChanged(placeholder);
-            } else if (value is int) {
-              onChanged(value);
-            } else {
-              onChanged(value.round());
-            }
-          },
-        ),
-      ),
+      title: Text(title),
+      subtitle: description == null ? null : Text(description!),
+      trailingBuilder: (BuildContext context, bool isCompact) {
+        return SizedBox(
+          width: isCompact ? double.infinity : 160,
+          child: NumberBox(
+            mode: SpinButtonPlacementMode.none,
+            placeholder: placeholder.toString(),
+            value: value,
+            onChanged: (num? value) {
+              if (value == null) {
+                onChanged(placeholder);
+              } else if (value is int) {
+                onChanged(value);
+              } else {
+                onChanged(value.round());
+              }
+            },
+          ),
+        );
+      },
     );
   }
 }

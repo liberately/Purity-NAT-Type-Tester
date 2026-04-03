@@ -1,4 +1,5 @@
 import 'package:fluent_ui/fluent_ui.dart';
+import 'package:nat_tester/widgets/adapter_list_tile.dart';
 
 class ReadOnlyValueTile extends StatelessWidget {
   const ReadOnlyValueTile(
@@ -18,19 +19,22 @@ class ReadOnlyValueTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
+    return AdapterListTile(
       leading: Icon(icon),
       title: Text(title),
       subtitle: description == null ? null : Text(description!),
-      trailing: SizedBox(
-        width: 320,
-        child: Text(
-          value,
-          textAlign: TextAlign.end,
-          maxLines: maxLines,
-          overflow: TextOverflow.ellipsis,
-        ),
-      ),
+      trailingBuilder: (BuildContext context, bool isCompact) {
+        return SizedBox(
+          width: isCompact ? double.infinity : 320,
+          child: Text(
+            value,
+            textAlign: isCompact ? TextAlign.start : TextAlign.end,
+            maxLines: maxLines,
+            softWrap: true,
+            overflow: TextOverflow.ellipsis,
+          ),
+        );
+      },
     );
   }
 }
