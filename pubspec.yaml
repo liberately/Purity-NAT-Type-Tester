@@ -42,7 +42,7 @@ dependencies:
   stun:
     git:
       url: https://github.com/halifox/dart_stun
-      ref: ^3.0.1
+      ref: 3.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

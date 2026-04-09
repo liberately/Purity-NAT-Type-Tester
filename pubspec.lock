@@ -641,11 +641,11 @@ packages:
     dependency: "direct main"
     description:
       path: "."
-      ref: "^3.0.1"
-      resolved-ref: a6bc04c674c0fb4c9aeb3e439bea6599891793d1
+      ref: "3.0.2"
+      resolved-ref: "6f2a54983151ea97f743445a96a08d460cbc90b1"
       url: "https://github.com/halifox/dart_stun"
     source: git
-    version: "3.0.1"
+    version: "3.0.2"
   term_glyph:
     dependency: transitive
     description:

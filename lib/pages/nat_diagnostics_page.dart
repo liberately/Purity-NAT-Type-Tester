@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:fluent_ui/fluent_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:nat_tester/value_formatters.dart';
@@ -5,9 +7,24 @@ import 'package:nat_tester/widgets/editable_combo_action_tile.dart';
 import 'package:nat_tester/widgets/expander_section.dart';
 import 'package:nat_tester/widgets/number_field_tile.dart';
 import 'package:nat_tester/widgets/read_only_value_tile.dart';
+import 'package:nat_tester/widgets/select_field_tile.dart';
 import 'package:nat_tester/widgets/switch_tile.dart';
 import 'package:nat_tester/widgets/text_field_tile.dart';
 import 'package:stun/stun.dart';
+
+enum _AddressFamilyOption {
+  auto(null, '自动 (Auto)'),
+  ipv4(InternetAddressType.IPv4, 'IPv4'),
+  ipv6(InternetAddressType.IPv6, 'IPv6');
+
+  const _AddressFamilyOption(this.type, this.label);
+
+  final InternetAddressType? type;
+  final String label;
+
+  @override
+  String toString() => label;
+}
 
 class NatDiagnosticsPage extends HookWidget {
   static const int _maxLogEntries = 200;
@@ -18,6 +35,7 @@ class NatDiagnosticsPage extends HookWidget {
   Widget build(BuildContext context) {
     final serverUri = useState<String>('stun:stun.hot-chilli.net:3478');
     final localIp = useState<String>('');
+    final addressFamily = useState<_AddressFamilyOption>(_AddressFamilyOption.auto);
     final localPort = useState<int>(0);
     final initialRtoMs = useState<int>(200);
     final maxRetransmissions = useState<int>(2);
@@ -102,6 +120,7 @@ class NatDiagnosticsPage extends HookWidget {
                                 localIp: localIp.value.isEmpty
                                     ? null
                                     : localIp.value,
+                                addressType: addressFamily.value.type,
                                 localPort: localPort.value,
                                 initialRto: Duration(
                                   milliseconds: initialRtoMs.value,
@@ -159,6 +178,17 @@ class NatDiagnosticsPage extends HookWidget {
                         value: localIp.value,
                         onChanged: (String value) {
                           localIp.value = value;
+                        },
+                      ),
+                      SelectFieldTile<_AddressFamilyOption>(
+                        icon: FluentIcons.internet_sharing,
+                        title: '地址族选择 (Address Family)',
+                        description:
+                            '自动模式会跟随目标解析结果；选择 IPv4 或 IPv6 后，只使用对应地址族的 STUN 端点与 UDP socket。',
+                        options: _AddressFamilyOption.values,
+                        value: addressFamily.value,
+                        onChanged: (_AddressFamilyOption value) {
+                          addressFamily.value = value;
                         },
                       ),
                       NumberFieldTile(
@@ -465,3 +495,4 @@ String _formatLogEntry(StunLogEvent event) {
   final String level = event.level.name.toUpperCase();
   return '[$timestamp] [$level] ${event.format()}';
 }
+
