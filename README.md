@@ -64,6 +64,9 @@ flutter run -d ios
 - [JavaScript WebSockets with UDP?](https://stackoverflow.com/questions/4657033/javascript-websockets-with-udp)
 - [Reading from UDP port in browser](https://www.codeease.net/programming/questions/reading-from-udp-port-in-browser)
 
+## 许可证
+
+本项目遵循 [GPL-3.0 License](LICENSE)。
 
 # 说明
 
