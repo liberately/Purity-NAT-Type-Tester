@@ -1,34 +1,14 @@
-# NAT 网络诊断工具
+# PureNATCheck
 
-<div align="center">
+一个基于 Flutter 构建的 NAT / STUN 网络诊断工具，用来快速观察公网映射、过滤行为、映射存活时间与扩展网络特征。
 
-![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?style=for-the-badge&logo=flutter&logoColor=white)
-![Dart](https://img.shields.io/badge/Dart-3.x-0175C2?style=for-the-badge&logo=dart&logoColor=white)
-![Fluent UI](https://img.shields.io/badge/Fluent_UI-Desktop-0F6CBD?style=for-the-badge&logo=windows11&logoColor=white)
-![Riverpod](https://img.shields.io/badge/Riverpod-State_Management-40C4FF?style=for-the-badge)
-![STUN](https://img.shields.io/badge/STUN-NAT_Diagnostics-1F8A70?style=for-the-badge)
-![UDP](https://img.shields.io/badge/UDP-Network_Testing-FF7A00?style=for-the-badge)
-![GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-EA4335?style=for-the-badge)
-![Windows](https://img.shields.io/badge/Windows-Supported-0078D6?style=for-the-badge&logo=windows&logoColor=white)
-![macOS](https://img.shields.io/badge/macOS-Supported-111111?style=for-the-badge&logo=apple&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-Supported-FCC624?style=for-the-badge&logo=linux&logoColor=black)
-![Android](https://img.shields.io/badge/Android-Supported-3DDC84?style=for-the-badge&logo=android&logoColor=white)
-![iOS](https://img.shields.io/badge/iOS-Supported-000000?style=for-the-badge&logo=apple&logoColor=white)
-![Web](https://img.shields.io/badge/Web-Not_Supported-8B0000?style=for-the-badge&logo=googlechrome&logoColor=white)
-
-**一个基于 Flutter 构建的 NAT / STUN 网络诊断工具，用来快速观察公网映射、过滤行为、映射存活时间与扩展网络特征。**
-
-</div>
-
----
-
-## 项目简介
+## 简介
 
 这个项目是一个用于 **NAT 行为检测与 STUN 诊断** 的 Flutter 应用，当前界面采用 Fluent UI 风格，适合在桌面环境下作为网络测试小工具使用。它可以帮助你观察当前网络是否经过 NAT、NAT 的映射与过滤策略、服务端能力、映射存活时间估算，以及一些更偏工程诊断用途的扩展指标。
 
 相较于只返回一个“能不能通”的简单测试工具，这个项目更偏向“**把网络行为拆开来看**”。你既可以直接选择公开 STUN 服务快速执行测试，也可以手动调整本地绑定地址、端口、地址族、超时、重传、分片填充等参数，观察不同网络环境下的响应差异。
 
-## 功能亮点
+## 功能
 
 - 支持填写或选择目标 STUN 服务 URI，快速发起 NAT 探测。
 - 支持自定义本地绑定 IP 与端口，便于多网卡或特定出口场景验证。
@@ -45,8 +25,6 @@
 <p float="center">
    <img src="./screenshot/%7B9B4D2932-099C-4F07-83FA-FD1CB2382C9A%7D.png" width="47%"/>
    <img src="./screenshot/%7BE89C4CD0-0575-4F9E-A3B3-3261B0885182%7D.png" width="47%"/>
-</p>
-<p float="center">
    <img src="./screenshot/%7B125B347D-FED2-4D11-B8F3-F2F6F501B6A6%7D.png" width="47%"/>
    <img src="./screenshot/%7B2E6AC64A-C24F-4EF7-AED3-83F4D80EEADD%7D.png" width="47%"/>
 </p>
@@ -60,27 +38,8 @@
 
 ## 快速开始
 
-### 运行环境
-
-- 已安装 Flutter SDK
-- 已安装对应目标平台开发环境
-- 具备可访问外部 STUN 服务的网络环境
-
-### 安装依赖
-
 ```bash
 flutter pub get
-```
-
-### 直接运行
-
-```bash
-flutter run
-```
-
-### 运行到指定平台
-
-```bash
 flutter run -d windows
 flutter run -d macos
 flutter run -d linux
@@ -96,22 +55,6 @@ flutter run -d ios
 - flutter_riverpod
 - hooks_riverpod
 - flutter_hooks
-- STUN
-
-## 检测维度一览
-
-| 维度 | 说明 |
-| --- | --- |
-| 网络可达性 | 判断当前网络是否能与 STUN 服务完成基本 UDP 通信 |
-| NAT 是否存在 | 通过本地地址与映射地址对比判断是否存在 NAT |
-| 映射行为 | 观察 NAT 对不同目标是否复用相同外部映射 |
-| 过滤行为 | 观察 NAT / 防火墙对外部来包的接收条件 |
-| 传统 NAT 类型 | 将结果映射为常见 NAT 分类名称 |
-| 映射存活时间 | 估算 NAT 映射空闲状态下的生命周期 |
-| Hairpinning | 判断局域网设备能否通过公网映射回访自身 |
-| 分片处理能力 | 判断较大 UDP 报文或分片在路径中的处理表现 |
-| ALG 检测 | 判断中间设备是否可能对报文做了协议级干预 |
-| 服务端能力 | 判断 STUN 服务是否支持扩展属性和相关行为 |
 
 ## 不支持 Web 平台
 
@@ -120,3 +63,213 @@ flutter run -d ios
 - [Why can't I send UDP packets from a browser?](https://gafferongames.com/post/why_cant_i_send_udp_packets_from_a_browser/)
 - [JavaScript WebSockets with UDP?](https://stackoverflow.com/questions/4657033/javascript-websockets-with-udp)
 - [Reading from UDP port in browser](https://www.codeease.net/programming/questions/reading-from-udp-port-in-browser)
+
+
+# 说明
+
+## 探测结果 (Detection Results)
+
+### 网络可达性 (Reachability)
+
+**可达 (Reachable)：** 网络正常，可以与 STUN 服务进行 UDP 通信。
+
+**UDP 被阻断 (UDP Blocked)：** 网络限制了 UDP 流量，无法使用 STUN 服务或建立 UDP 连接。
+
+**待判定 (Undetermined)：** 测试未完成或结果不确定。
+
+### 映射行为 (Mapping Behavior)
+
+NAT 映射行为描述了 NAT 设备如何为内网主机分配和管理外部端口映射。这直接影响 P2P 连接的建立难度。
+
+#### 端点无关型映射 (Endpoint-Independent Mapping)
+
+**特征：** 无论内网主机向哪个外部目标发送数据，NAT 都会为同一个内网地址:端口分配同一个外部映射地址:端口。
+
+**行为：**
+- 内网 `192.168.1.100:5000` 向 `服务器A:3478` 发送数据 → NAT 分配 `公网IP:10000`
+- 同一个 `192.168.1.100:5000` 向 `服务器B:3478` 发送数据 → NAT 仍使用 `公网IP:10000`
+
+**优点：** P2P 连接最友好，打洞成功率最高。只要知道映射后的公网地址和端口，任何外部主机都可以通过这个地址与内网主机通信（前提是通过了过滤规则）。
+
+**典型场景：** 高质量家用路由器、企业级 NAT 设备的推荐配置。
+
+#### 地址相关型映射 (Address-Dependent Mapping)
+
+**特征：** NAT 根据目标 IP 地址的不同来决定是否复用映射。向不同 IP 地址发送数据时，会分配不同的外部端口。
+
+**行为：**
+- 内网 `192.168.1.100:5000` 向 `1.2.3.4:3478` 发送数据 → NAT 分配 `公网IP:10000`
+- 同一个 `192.168.1.100:5000` 向 `5.6.7.8:3478` 发送数据 → NAT 分配 `公网IP:10001`
+- 同一个 `192.168.1.100:5000` 向 `1.2.3.4:9999` 发送数据 → NAT 仍使用 `公网IP:10000`（目标 IP 相同）
+
+**影响：** P2P 打洞需要双方都先向对方的公网地址发送数据，才能建立映射。成功率中等。
+
+**典型场景：** 部分运营商级 NAT（CGNAT）、安全性要求较高的网络环境。
+
+#### 地址与端口相关型映射 (Address-and-Port-Dependent Mapping)
+
+**特征：** NAT 根据目标 IP 地址和端口的组合来决定映射。向不同的目标端点（IP+端口）发送数据时，会分配不同的外部端口。
+
+**行为：**
+- 内网 `192.168.1.100:5000` 向 `1.2.3.4:3478` 发送数据 → NAT 分配 `公网IP:10000`
+- 同一个 `192.168.1.100:5000` 向 `1.2.3.4:9999` 发送数据 → NAT 分配 `公网IP:10001`（目标端口不同）
+- 同一个 `192.168.1.100:5000` 向 `5.6.7.8:3478` 发送数据 → NAT 分配 `公网IP:10002`（目标 IP 不同）
+
+**影响：** P2P 打洞非常困难，通常被归类为对称型 NAT。需要端口预测或中继服务器才能建立连接。
+
+**典型场景：** 高安全性企业网络、部分移动运营商网络、对称型 NAT 设备。
+
+### 过滤行为 (Filtering Behavior)
+
+NAT 过滤行为描述了 NAT 设备如何决定是否接受外部主机发送到已建立映射端口的数据包。这直接影响外部主机能否主动向内网主机发送数据。
+
+#### 端点无关型过滤 (Endpoint-Independent Filtering)
+
+**特征：** 一旦 NAT 为某个内网端点建立了映射，任何外部主机都可以通过这个映射向内网主机发送数据，不受限制。
+
+**行为：**
+- 内网 `192.168.1.100:5000` 向 `服务器A:3478` 发送数据 → NAT 建立映射 `公网IP:10000`
+- `服务器B:9999` 向 `公网IP:10000` 发送数据 → **允许通过**，即使内网主机从未向服务器B发送过数据
+
+**优点：** P2P 打洞最容易，外部主机可以直接向已知的公网映射发送数据。
+
+**安全性：** 相对较低，任何知道映射地址的外部主机都可以发送数据。
+
+**典型场景：** 老式家用路由器、Full Cone NAT。
+
+#### 地址相关型过滤 (Address-Dependent Filtering)
+
+**特征：** 只有内网主机曾经向其发送过数据的外部 IP 地址，才能通过映射向内网主机发送数据。
+
+**行为：**
+- 内网 `192.168.1.100:5000` 向 `1.2.3.4:3478` 发送数据 → NAT 建立映射 `公网IP:10000`
+- `1.2.3.4:9999` 向 `公网IP:10000` 发送数据 → **允许通过**（IP 地址匹配，端口不限）
+- `5.6.7.8:3478` 向 `公网IP:10000` 发送数据 → **被拒绝**（内网主机未向这个 IP 发送过数据）
+
+**平衡：** 安全性和 P2P 兼容性的折中方案。
+
+**典型场景：** 现代家用路由器的常见配置、Restricted Cone NAT。
+
+#### 地址与端口相关型过滤 (Address-and-Port-Dependent Filtering)
+
+**特征：** 只有内网主机曾经向其发送过数据的外部端点（IP+端口组合），才能通过映射向内网主机发送数据。
+
+**行为：**
+- 内网 `192.168.1.100:5000` 向 `1.2.3.4:3478` 发送数据 → NAT 建立映射 `公网IP:10000`
+- `1.2.3.4:3478` 向 `公网IP:10000` 发送数据 → **允许通过**（IP 和端口完全匹配）
+- `1.2.3.4:9999` 向 `公网IP:10000` 发送数据 → **被拒绝**（端口不匹配）
+- `5.6.7.8:3478` 向 `公网IP:10000` 发送数据 → **被拒绝**（IP 不匹配）
+
+**安全性：** 最严格的过滤策略，外部主机必须使用内网主机曾经通信过的确切端点才能发送数据。
+
+**影响：** P2P 打洞难度最大，需要精确的端口协商。
+
+**典型场景：** 企业防火墙、安全性要求高的网络环境、Port-Restricted Cone NAT 和 Symmetric NAT。
+
+### 传统 NAT 类型 (Legacy NAT Type)
+
+以下是常见的传统 NAT 分类方式及其与映射/过滤行为的对应关系：
+
+#### 开放互联网 (Open Internet)
+
+**特征：** 设备直接暴露在公网，没有 NAT。
+
+**映射行为：** 无（不适用）  
+**过滤行为：** 取决于本地防火墙  
+**P2P 难度：** 最简单，无需打洞。
+
+#### 完全圆锥型 NAT (Full Cone NAT)
+
+**特征：** 一旦建立映射，任何外部主机都可以通过映射地址向内网主机发送数据。
+
+**映射行为：** 端点无关型映射  
+**过滤行为：** 端点无关型过滤  
+**P2P 难度：** 非常简单。
+
+#### 受限圆锥型 NAT (Restricted Cone NAT)
+
+**特征：** 只有内网主机曾向其发送过数据的外部 IP 地址才能回复数据，但端口不限。
+
+**映射行为：** 端点无关型映射  
+**过滤行为：** 地址相关型过滤  
+**P2P 难度：** 简单，需要双方先发送数据。
+
+#### 端口受限圆锥型 NAT (Port-Restricted Cone NAT)
+
+**特征：** 只有内网主机曾向其发送过数据的外部端点（IP+端口）才能回复数据。
+
+**映射行为：** 端点无关型映射  
+**过滤行为：** 地址与端口相关型过滤  
+**P2P 难度：** 中等，需要精确的端口协商。
+
+#### 对称型 NAT (Symmetric NAT)
+
+**特征：** 向不同的外部端点发送数据时会使用不同的映射端口，且严格限制回复来源。
+
+**映射行为：** 地址与端口相关型映射  
+**过滤行为：** 地址与端口相关型过滤  
+**P2P 难度：** 非常困难，通常需要中继服务器。
+
+#### 对称型 UDP 防火墙 (Symmetric UDP Firewall)
+
+**特征：** 不存在 NAT，但防火墙采用对称型过滤规则。
+
+**映射行为：** 无（不适用）  
+**过滤行为：** 地址与端口相关型过滤  
+**P2P 难度：** 与对称型 NAT 类似。
+
+## 扩展能力 (Extended Diagnostics)
+
+### 映射存活时间 (Binding Lifetime Estimate)
+
+NAT 映射并非永久有效，长时间无数据传输后会自动失效。此工具通过二分查找估算映射在空闲状态下的存活时间：
+
+- **较短（< 30 秒）：** 需要频繁发送保活包，增加网络开销
+- **适中（30 秒 - 5 分钟）：** 大多数实时通信应用的常见范围
+- **较长（> 5 分钟）：** 对保活要求较低，但映射可能在长时间空闲后失效
+
+### 回环支持 (Hairpinning)
+
+Hairpinning 是指局域网内的设备能否通过 NAT 的公网映射地址访问同一局域网内的另一台设备。
+
+- **支持：** 局域网设备可以通过公网映射地址互访，便于 P2P 应用在同一网络内工作
+- **不支持：** 同一局域网内的设备无法通过公网映射地址互访，P2P 应用需要检测并使用本地地址
+
+### 分片处理能力 (Fragment Handling)
+
+测试网络路径是否能够正确处理较大的 UDP 数据包或 IP 分片：
+
+- **支持：** 网络可以传输大型 UDP 报文，MTU 配置合理
+- **不支持：** 网络可能丢弃分片包或限制 UDP 报文大小，需要注意应用层的 MTU 适配
+
+### ALG 检测结果 (ALG Detected)
+
+ALG 是某些 NAT 设备的功能，会检查并修改应用层协议的内容（例如 SIP、FTP）。如果检测到 ALG 干预：
+
+- STUN 报文可能被修改
+- 应用层协议可能无法正常工作
+- 建议关闭 NAT 设备上的相关 ALG 功能
+
+## 服务端能力 (Server Capabilities)
+
+**OTHER-ADDRESS：** 服务器是否支持提供备用地址，用于映射/过滤行为检测。
+
+**RESPONSE-ORIGIN：** 服务器是否支持从不同源地址响应，用于过滤行为检测。
+
+**CHANGE-REQUEST：** 服务器是否支持更改响应源（传统 STUN RFC 3489 特性）。
+
+**RESPONSE-PORT：** 服务器是否支持从不同端口响应。
+
+**PADDING：** 服务器是否支持填充属性，用于分片处理能力测试。
+
+## 其他说明
+
+### 探测状态
+
+**支持 (Yes)：** 特性可用或行为被确认。
+
+**不支持 (No)：** 特性不可用或行为未发生。
+
+**无法探测 (Unsupported)：** STUN 服务器不支持该项检测所需的功能。
+
+**待判定 (Undetermined)：** 测试未完成或结果不确定。
